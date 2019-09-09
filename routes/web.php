@@ -19,11 +19,13 @@ $data = [
     'namespace' => 'Admin',
 //    'middleware' => 'auth'
 ];
-//Route::group($data, function () {
-//
-//    Route::resource('/products', 'ProductController')->except([
+Route::group($data, function () {
+
+//    Route::resource('/', 'ProductController')->except([
 //        'show'
 //    ]);
-//
-//
-//});
+    Route::get('/', function () {
+        return view('layouts.admin');
+    });
+
+});

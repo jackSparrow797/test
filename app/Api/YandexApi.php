@@ -15,12 +15,6 @@ class YandexApi
 
     private $coords = [];
 
-    /**
-     * @param $lat
-     * @param $lon
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
     public function getWheather($lat, $lon)
     {
         $headers = [
