@@ -21,11 +21,11 @@ $data = [
 ];
 Route::group($data, function () {
 
-//    Route::resource('/', 'ProductController')->except([
-//        'show'
-//    ]);
     Route::get('/', function () {
         return view('layouts.admin');
     });
+    Route::resource('orders', 'OrderController')->except([
+        'show'
+    ]);
 
 });
