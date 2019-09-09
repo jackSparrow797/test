@@ -11,6 +11,19 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('/', 'Web\WheatherController@index')->name('main');
+
+$data = [
+    'prefix' => 'admin',
+    'namespace' => 'Admin',
+//    'middleware' => 'auth'
+];
+//Route::group($data, function () {
+//
+//    Route::resource('/products', 'ProductController')->except([
+//        'show'
+//    ]);
+//
+//
+//});
