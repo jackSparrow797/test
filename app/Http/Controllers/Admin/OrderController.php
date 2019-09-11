@@ -2,12 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Order;
+use App\Http\Requests\Admin\OrderRequest;
+use App\Partner;
+use App\Repositories\Admin\OrderRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class OrderController extends Controller
 {
+
+    private $orderRepository;
+
+    public function __construct()
+    {
+        $this->orderRepository = app(OrderRepository::class);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,9 +25,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $paginate = Order::with(['orderProducts:id,price,quantity,product_id,order_id', 'orderPartner:id,name', 'orderProductsDetail:name'])
-            ->select(['id','status','partner_id'])
-            ->paginate(15);
+        $paginate = $this->orderRepository->getAllOrdersWithPaginate();
         return view('admin.order.index', compact('paginate'));
     }
 
@@ -61,20 +69,40 @@ class OrderController extends Controller
      */
     public function edit($id)
     {
-
-        return view('admin.order.edit');
+        $order = $this->orderRepository->getEdit($id);
+        if (empty($order)) {
+            return abort(404);
+        }
+        $partners = Partner::select(['id', 'name'])
+            ->get();
+        return view('admin.order.edit', compact('order', 'partners'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Http\Requests\Admin\OrderRequest $request
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(OrderRequest $request, $id)
     {
-        //
+        $validated = $request->validated();
+
+        $order = $this->orderRepository->getEdit($id);
+        if (empty($order)) {
+            return back()->withErrors(['message' => "Заказ №$id не найден"])
+                ->withInput();
+        }
+        $result = $order->update($validated);
+        if ($result) {
+            return redirect()->route('orders.edit', $id)
+                ->with(['success' => 'Сохранено!']);
+        } else {
+            return back()->withErrors(['message' => "Ошибка при сохранении!"])
+                ->withInput();
+        }
+
     }
 
     /**

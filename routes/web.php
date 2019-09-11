@@ -25,7 +25,7 @@ Route::group($data, function () {
         return view('layouts.admin');
     });
     Route::resource('orders', 'OrderController')->except([
-        'show'
+        'show', 'create', 'store', 'destroy'
     ]);
 
 });
