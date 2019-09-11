@@ -23,7 +23,7 @@ Route::group($data, function () {
 
     Route::get('/', function () {
         return view('layouts.admin');
-    });
+    })->name('panel');
     Route::resource('orders', 'OrderController')->except([
         'show', 'create', 'store', 'destroy'
     ]);

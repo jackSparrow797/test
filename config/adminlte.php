@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 2',
+    'title' => 'Flor2u.ru - тестовое задание',
 
     'title_prefix' => '',
 
@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo' => '<b>Flor2u.ru</b> Тест',
 
     'logo_mini' => '<b>A</b>LT',
 
@@ -106,7 +106,7 @@ return [
     |
     */
 
-    'dashboard_url' => 'home',
+    'dashboard_url' => 'admin',
 
     'logout_url' => 'logout',
 
@@ -128,7 +128,7 @@ return [
     */
 
     'menu' => [
-        ['header' => 'main_navigation'],
+        ['header' => 'Навигация'],
         [
             'text' => 'Заказы',
             'url'  => 'admin/orders',

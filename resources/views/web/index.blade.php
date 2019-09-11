@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-12">
             <h1>Погода в Брянске</h1>
             @if (empty($wheather['error']))
                 <p>Текущая температура: {{ $wheather['fact']['temp'] }} &deg;С</p>
@@ -15,6 +15,15 @@
                     {{ $wheather['error'] }}
                 </div>
             @endif
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <p>
+                Другие пункты задание реализованы в
+                <a href="{{ route('panel') }}" class="btn btn-primary">Админке</a>
+            </p>
         </div>
     </div>
 
