@@ -25,8 +25,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $paginate = $this->orderRepository->getAllOrdersWithPaginate();
-        return view('admin.order.index', compact('paginate'));
+        $orders = $this->orderRepository
+            ->getAllTabsOrders();
+        return view('admin.order.index', compact('orders'));
     }
 
     /**

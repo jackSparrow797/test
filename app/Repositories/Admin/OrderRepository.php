@@ -8,9 +8,19 @@ use App\Order as Model;
 use App\Order;
 use App\Product;
 use App\Repositories\CoreRepository;
+use Carbon\Carbon;
+
 
 class OrderRepository extends CoreRepository
 {
+    const WITH = [
+        'orderProducts:id,price,quantity,product_id,order_id',
+        'orderPartner:id,name',
+        'orderProductsDetail:name'
+    ];
+    const SELECT = ['id', 'status', 'partner_id', 'delivery_dt'];
+
+
     /**
      * @return mixed|string
      */
@@ -20,7 +30,7 @@ class OrderRepository extends CoreRepository
     }
 
     /**
-     * Метод, для получения
+     * Метод, для получения заказа для редактирования
      *
      * @param $id
      * @return mixed
@@ -34,18 +44,97 @@ class OrderRepository extends CoreRepository
     }
 
     /**
-     * получение данных для отображения на странице списка элментов
+     * получение данных для табов
      *
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return mixed
      */
-    public function getAllOrdersWithPaginate()
+    public function getAllTabsOrders()
     {
-        $selectFields = ['id', 'status', 'partner_id'];
-        $with = ['orderProducts:id,price,quantity,product_id,order_id', 'orderPartner:id,name', 'orderProductsDetail:name'];
+        $out['last-orders'] = $this->getLastOrdersWithPaginate();
+        $out['current-orders'] = $this->getCurrentOrdersWithPaginate();
+        $out['new-orders'] = $this->getNewOrdersWithPaginate();
+        $out['completed-orders'] = $this->getCompletedOrdersWithPaginate();
+        return $out;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getLastOrdersWithPaginate()
+    {
+        $selectFields = self::SELECT;
+        $with = self::WITH;
+        $where = [
+            ['status', '=', 10],
+            ['delivery_dt', '<', Carbon::now()]
+        ];
         $out = $this->startConditions()
+            ->where($where)
+            ->orderBy('delivery_dt', 'desc')
             ->with($with)
             ->select($selectFields)
-            ->paginate(15);
+            ->paginate(50);
+        return $out;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrentOrdersWithPaginate()
+    {
+        $selectFields = self::SELECT;
+        $with = self::WITH;
+        $where = [
+            ['status', '=', 10],
+            ['delivery_dt', '>', Carbon::now()],
+            ['delivery_dt', '<', Carbon::now()->addHours(24)],
+        ];
+        $out = $this->startConditions()
+            ->where($where)
+            ->orderBy('delivery_dt', 'asc')
+            ->with($with)
+            ->select($selectFields)
+            ->paginate(50);
+        return $out;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNewOrdersWithPaginate()
+    {
+        $selectFields = self::SELECT;
+        $with = self::WITH;
+        $where = [
+            ['status', '=', 0],
+            ['delivery_dt', '>', Carbon::now()]
+        ];
+        $out = $this->startConditions()
+            ->where($where)
+            ->orderBy('delivery_dt', 'asc')
+            ->with($with)
+            ->select($selectFields)
+            ->paginate(50);
+        return $out;
+    }
+    /**
+     * @return mixed
+     */
+    public function getCompletedOrdersWithPaginate()
+    {
+        $selectFields = self::SELECT;
+        $with = self::WITH;
+        $where = [
+            ['status', '=', 20]
+        ];
+        $out = $this->startConditions()
+            ->where($where)
+            ->whereDate('delivery_dt', Carbon::today())
+            ->orderBy('delivery_dt', 'desc')
+            ->with($with)
+            ->select($selectFields)
+            ->paginate(50);
         return $out;
     }
 
@@ -63,7 +152,7 @@ class OrderRepository extends CoreRepository
             ->with($relation)
             ->get();
         foreach ($ordersProducts as $product) {
-            /** @var Product $product*/
+            /** @var Product $product */
             $out[] = $product->vendor->email;
         }
         return $out;

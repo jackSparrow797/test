@@ -9,76 +9,32 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <div class="tab-content" id="myTabContent">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                ID
-                            </div>
-                            <div class="col">
-                                Партнер
-                            </div>
-                            <div class="col">
-                                Стоимость заказа
-                            </div>
-                            <div class="col">
-                                Состав заказа
-                            </div>
-                            <div class="col">
-                                Статус заказа
-                            </div>
-                        </div>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#last-orders" role="tab"
+                       aria-controls="home" aria-selected="true">Просроченные заказы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#current-orders" role="tab"
+                       aria-controls="profile" aria-selected="false">Текущие</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#new-orders" role="tab"
+                       aria-controls="contact" aria-selected="false">Новые заказы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#completed-orders" role="tab"
+                       aria-controls="contact" aria-selected="false">Выполненные заказы</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="orders-tabs-outer">
+                @foreach($orders as $tab_id => $paginate)
+                    <div class="tab-pane fade @if ($loop->first) show active @endif" id="{{ $tab_id }}"
+                         role="tabpanel" aria-labelledby="home-tab">
+                        @include('admin.order.includes._tab_content', compact('paginate'))
                     </div>
-                </div>
-                @forelse($paginate as $orderItem)
-                    @php /**  @var App\Order $orderItem */ @endphp
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col">
-                                    <a href="{{ route('orders.edit', $orderItem->id) }}" title="Редактировать заказ">
-                                        {!! $orderItem->id !!}
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    {{ $orderItem->orderPartner->name }}
-                                </div>
-                                <div class="col">
-                                    {{ $orderItem->getTotalPrice() }} рублей
-                                </div>
-                                <div class="col">
-                                    @forelse($orderItem->orderProductsDetail as $productItem)
-                                        <p>{!! $productItem->name !!}</p>
-                                    @empty
-                                        нет товаров
-                                    @endforelse
-                                </div>
-                                <div class="col">
-                                    {!! $orderItem->statusName !!}
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                @empty
-                    <p>Нет заказов</p>
-                @endforelse
+                @endforeach
             </div>
-
-            @if ($paginate->total() > $paginate->count())
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card my-3">
-                            <div class="card-body">
-                                <nav aria-label="Page navigation example">
-                                    {{ $paginate->links() }}
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
 
         </div>
     </div>
