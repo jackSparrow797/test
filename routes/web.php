@@ -11,6 +11,21 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::get('/', 'Web\WheatherController@index')->name('main');
+
+$data = [
+    'prefix' => 'admin',
+    'namespace' => 'Admin',
+//    'middleware' => 'auth'
+];
+Route::group($data, function () {
+
+    Route::get('/', function () {
+        return view('layouts.admin');
+    })->name('panel');
+    Route::resource('orders', 'OrderController')->except([
+        'show', 'create', 'store', 'destroy'
+    ]);
+
 });
