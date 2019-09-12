@@ -59,7 +59,7 @@ class OrderObserver
     {
         $dirtyStatus = $order->isDirty('status');
         $isStatusComplite = $order->status == Order::STATUS_MAIL_SEND;
-        if (true || $dirtyStatus && $isStatusComplite) {
+        if ($dirtyStatus && $isStatusComplite) {
             $vendorEmails = $this->orderRepository
                 ->getVendorEmailForProduct($order);
             $partnerEmail = $this->orderRepository
